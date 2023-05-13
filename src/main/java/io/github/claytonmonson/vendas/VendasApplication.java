@@ -33,9 +33,12 @@ public class VendasApplication {
 
 			pedidos.save(p);
 
-			Cliente cliente = clientes.findClienteFetchPedidos(fulano.getId());
-			System.out.println(cliente);
-			System.out.println(cliente.getPedidos());
+			pedidos.findByCliente(fulano).forEach(System.out::println);
+
+
+//			Cliente cliente = clientes.findClienteFetchPedidos(fulano.getId());
+//			System.out.println(cliente);
+//			System.out.println(cliente.getPedidos());
 
 //			List<Cliente> result = clientes.encontrarPorNome("Douglas");
 //			result.forEach(System.out::println);
