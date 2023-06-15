@@ -4,6 +4,7 @@ import io.github.claytonmonson.vendas.domain.entity.Cliente;
 import io.github.claytonmonson.vendas.domain.entity.ItemPedido;
 import io.github.claytonmonson.vendas.domain.entity.Pedido;
 import io.github.claytonmonson.vendas.domain.entity.Produto;
+import io.github.claytonmonson.vendas.domain.enums.StatusPedido;
 import io.github.claytonmonson.vendas.domain.repository.Clientes;
 import io.github.claytonmonson.vendas.domain.repository.ItensPedido;
 import io.github.claytonmonson.vendas.domain.repository.Pedidos;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,13 +43,19 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
-        List<ItemPedido> itensPedido = converterItens(pedido, dto.getItens());
+        List<ItemPedido> itensPedido = converterItens(pedido, dto.getItems());
         repository.save(pedido);
         itensPedidoRepository.saveAll(itensPedido);
         pedido.setItens(itensPedido);
 
         return pedido;
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return repository.findByIdFetchItens(id);
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> itens) {
