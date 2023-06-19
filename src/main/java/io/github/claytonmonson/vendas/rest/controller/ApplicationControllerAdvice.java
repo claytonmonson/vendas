@@ -1,5 +1,6 @@
 package io.github.claytonmonson.vendas.rest.controller;
 
+import io.github.claytonmonson.vendas.exception.PedidoNaoEncontradoException;
 import io.github.claytonmonson.vendas.exception.RegraNegocioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,4 +16,11 @@ public class ApplicationControllerAdvice {
         String mensagemErro = ex.getMessage();
         return new ApiErrors(mensagemErro);
     }
+
+    @ExceptionHandler(PedidoNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrors handlePedidoNotFoundException(PedidoNaoEncontradoException ex){
+        return new ApiErrors(ex.getMessage());
+    }
+
 }

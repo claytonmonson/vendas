@@ -1,5 +1,6 @@
 package io.github.claytonmonson.vendas.service.impl;
 
+import io.github.claytonmonson.vendas.exception.PedidoNaoEncontradoException;
 import io.github.claytonmonson.vendas.domain.entity.Cliente;
 import io.github.claytonmonson.vendas.domain.entity.ItemPedido;
 import io.github.claytonmonson.vendas.domain.entity.Pedido;
@@ -56,6 +57,17 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Optional<Pedido> obterPedidoCompleto(Integer id) {
         return repository.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        repository
+                .findById(id)
+                .map(pedido -> {
+                    pedido.setStatus(statusPedido);
+                    return repository.save(pedido);
+                }).orElseThrow(()-> new PedidoNaoEncontradoException());
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> itens) {
